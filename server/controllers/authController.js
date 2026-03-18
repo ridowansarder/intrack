@@ -1,6 +1,7 @@
 import bcrypt from "bcryptjs";
 import userModel from "../models/userModel.js";
 import jwt from "jsonwebtoken";
+import { transporter } from "../config/mail.js";
 
 export const register = async (req, res) => {
   const { name, email, password } = req.body;
@@ -23,7 +24,6 @@ export const register = async (req, res) => {
       email,
       password: hashedPassword,
     });
-    await user.save();
 
     const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, {
       expiresIn: "7d",
@@ -35,6 +35,15 @@ export const register = async (req, res) => {
       sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
+
+    const mailOptions = {
+        from: process.env.SENDER_EMAIL,
+        to: email,
+        subject: "Welcome to InTrack",
+        text: `Hello ${name},\n\nWelcome to InTrack! We're excited to have you join our community.\n\nBest,\nInTrack Team`,
+    }
+
+    await transporter.sendMail(mailOptions);
 
     res.json({ success: true, message: "User registered successfully" });
   } catch (error) {
@@ -73,6 +82,15 @@ export const login = async (req, res) => {
       sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
+
+    const mailOptions = {
+        from: process.env.SENDER_EMAIL,
+        to: email,
+        subject: "Login Notification",
+        text: `Hello ${user.name},\n\nYou have successfully logged in to InTrack.\n\nBest,\nInTrack Team`,
+    }
+
+    await transporter.sendMail(mailOptions);
 
     res.json({ success: true, message: "User logged in successfully" });
   } catch (error) {
