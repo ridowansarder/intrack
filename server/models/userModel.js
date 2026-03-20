@@ -28,22 +28,22 @@ const userSchema = new mongoose.Schema(
       default: false,
     },
 
-    emailVerificationToken: {
+    emailVerificationOtp: {
       type: String,
       default: "",
     },
 
-    emailVerificationTokenExpiration: {
+    emailVerificationOtpExpiration: {
       type: Number,
       default: 0,
     },
 
-    resetPasswordToken: {
+    resetPasswordOtp: {
       type: String,
       default: "",
     },
 
-    resetPasswordTokenExpiration: {
+    resetPasswordOtpExpiration: {
       type: Number,
       default: 0,
     },
